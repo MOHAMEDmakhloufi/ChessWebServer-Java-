@@ -11,6 +11,16 @@ public class Connection {
     private String code;
     private boolean isCheck=false;
     private long finishGame=-1;
+    private boolean eatPiece=true;
+
+    public boolean isEatPiece() {
+        return eatPiece;
+    }
+
+    public void setEatPiece(boolean eatPiece) {
+        this.eatPiece = eatPiece;
+    }
+
     private BoardChess boardChess= new BoardChess(ServiceConnection.generateUniqueId());
 
     public Connection( String code) {

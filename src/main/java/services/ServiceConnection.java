@@ -117,13 +117,15 @@ public class ServiceConnection {
             connection.getBoardChess().getBoard().put(squareTo, pieceFrom);
             connection.getBoardChess().getBoard().put(squareFrom, new Piece());
             if(!pieceTo.getKey().isEmpty()){
+                connection.setEatPiece(true);
                 if (pieceTo.getColor()==1)
                     connection.getPortC().getPieces().remove(pieceTo);
                 else
                     connection.getPortU().getPieces().remove(pieceTo);
-            }
-            //increment the countOfMoves
-            incrementCountOfMoves(connection,id);
+            }else
+                //increment the countOfMoves
+                incrementCountOfMoves(connection,id);
+
             //test check
             connection.setCheck(Possibilty.isCheck(connection, -pieceFrom.getColor()));
             if (connection.isCheck()&&Possibilty.finishGame(connection, -pieceFrom.getColor())){
@@ -172,7 +174,10 @@ public class ServiceConnection {
         Optional<Connection> optionalConnection= list.stream().filter(c -> c.getPortC().getId()==id || c.getPortU().getId()==id).findFirst();
         if(optionalConnection.isPresent()) {
             Connection connection= optionalConnection.get();
-            return isYourTurn(connection, id);
+            boolean eatPiece= connection.isEatPiece();
+            if (eatPiece)
+                connection.setEatPiece(false);
+            return isYourTurn(connection, id) || eatPiece;
         }
         return false;
     }
