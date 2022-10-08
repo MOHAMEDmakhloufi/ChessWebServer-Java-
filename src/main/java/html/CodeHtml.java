@@ -48,7 +48,7 @@ public class CodeHtml {
     }
     public static String getWinnerCode(){
         return "<div class='is-check vectory'>\n" +
-                "        VECTORY\n" +
+                "        VICTORY\n" +
                 "    </div>";
     }
     public static String getDefaultCode(){
@@ -74,6 +74,46 @@ public class CodeHtml {
                 "                    a.click(); \n" +
                 "            } \n" +
                 "        }"+
+                "</script>";
+    }
+    public  static  String  isYourTurn(){
+        return "<script type='text/javascript'>\n" +
+                "let obj = JSON.parse('{\"turn\": false}');\n" +
+                "const id_user= document.getElementById('id_user').value;\n" +
+                "function requestChessServer() {\n" +
+                "  \n" +
+                "      var xmlhttp = new XMLHttpRequest();\n" +
+                "      xmlhttp.onreadystatechange = function() {\n" +
+                "        if (this.readyState == 4 && this.status == 200) {\n" +
+                "          \n" +
+                "          obj = JSON.parse(this.responseText);\n" +
+                "        }\n" +
+                "      };\n" +
+                "      xmlhttp.open('GET', `http://localhost:8088/isYourTurn/id-${id_user}/`, true);\n" +
+                "      xmlhttp.send();\n" +
+                "    \n" +
+                "  }\n" +
+                "\n" +
+                //"  let countDownDate = new Date().getTime()+60000;\n" +
+                "// console.log(countDownDate);\n" +
+                "\n" +
+                "let counter = setInterval(() => {\n" +
+//                "  // Get Date Now\n" +
+//                "  let dateNow = new Date().getTime();\n" +
+//                "\n" +
+//                "  // Find The Date Difference Between Now And Countdown Date\n" +
+//                "  let dateDiff = countDownDate - dateNow;\n" +
+//                "  \n" +
+                "  requestChessServer();\n" +
+//                "\n" +
+//                "  if (dateDiff < 0 || obj.turn ) {\n" +
+                "  if ( obj.turn ) {\n" +
+                "    let a= document.createElement('a');\n" +
+                "    a.href=`http://localhost:8088/click/4_1/id-${id_user}/`;\n" +
+                "    a.click();\n" +
+                "    clearInterval(counter);\n" +
+                "  }\n" +
+                "}, 1000);"+
                 "</script>";
     }
     public static String getScriptBlueColor(){

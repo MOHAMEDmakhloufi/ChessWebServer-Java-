@@ -30,6 +30,8 @@ public class ServiceConnection {
             return clickEvent(champs);
         }else if(req.contains("move")){
             return moveEvent(champs);
+        }else if(req.contains("isYourTurn")){
+            return "{\"turn\": "+isYourTurn(champs)+"}";
         }
         else {
             return  CodeHtml.getFinalHtmlCode("bodyMenu", CodeHtml.getMenuHtmlCode(), CodeHtml.getScriptCode());
@@ -56,7 +58,7 @@ public class ServiceConnection {
     //join a connection
     public static String joinConnection(List<String> champs){
         String getCode= champs.get(champs.indexOf("join")+1);
-        List<Connection> newlist= list.stream().filter(c -> c.getCode().equals(getCode)).map(c ->{c.getPortU().setId(c.getPortC().getId()+1);return c;}).collect(Collectors.toList());
+        List<Connection> newlist= list.stream().filter(c -> c.getCode().equals(getCode)&& c.getPortU().getId()==-1).map(c ->{c.getPortU().setId(c.getPortC().getId()+1);return c;}).collect(Collectors.toList());
         if(newlist.size()>0){
             return  CodeHtml.getFinalHtmlCode("bodyMenu", CodeHtml.getInputId(newlist.get(0).getPortU().getId()), CodeHtml.joinReponseCode("#E4E4E4","connection successful !",newlist.get(0).getPortU().getId()), CodeHtml.getScriptCodeClick());
         }
@@ -76,7 +78,7 @@ public class ServiceConnection {
             }
             //test if the player can move pieces or not
             if(!isYourTurn(connection, id))
-                return CodeHtml.getFinalHtmlCode("chessBoard", CodeHtml.getInputId(id), connection.getBoardChess().getHtmlCode(), CodeHtml.getScriptCodeClick());
+                return CodeHtml.getFinalHtmlCode("chessBoard", CodeHtml.getInputId(id), connection.getBoardChess().getHtmlCode(), CodeHtml.getScriptCodeClick(),  CodeHtml.isYourTurn());
             //get square
             String indexSquare= champs.get(champs.indexOf("click")+1);
             Square square= connection.getBoardChess().getSquare(indexSquare);
@@ -128,7 +130,7 @@ public class ServiceConnection {
                 connection.setFinishGame(id);
                 return CodeHtml.getFinalHtmlCode("chessBoard", CodeHtml.getWinnerCode(), connection.getBoardChess().getHtmlCode());
             }
-            return CodeHtml.getFinalHtmlCode("chessBoard", CodeHtml.getInputId(id), connection.getBoardChess().getHtmlCode(), CodeHtml.getScriptCodeClick());
+            return CodeHtml.getFinalHtmlCode("chessBoard", CodeHtml.getInputId(id), connection.getBoardChess().getHtmlCode(), CodeHtml.getScriptCodeClick(), CodeHtml.isYourTurn());
 
         }
 
@@ -163,5 +165,15 @@ public class ServiceConnection {
             return false;
         return true;
     }
+    public static boolean isYourTurn(List<String> champs){
+        //get connection
+        long id= getIdFromURL(champs);
 
+        Optional<Connection> optionalConnection= list.stream().filter(c -> c.getPortC().getId()==id || c.getPortU().getId()==id).findFirst();
+        if(optionalConnection.isPresent()) {
+            Connection connection= optionalConnection.get();
+            return isYourTurn(connection, id);
+        }
+        return false;
+    }
 }

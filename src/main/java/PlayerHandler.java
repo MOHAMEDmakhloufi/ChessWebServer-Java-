@@ -25,7 +25,11 @@ public class PlayerHandler implements Runnable{
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
                 //Send HTTP header
                 out.println("HTTP/1.2 200");
-                out.println("Content-type: text/html");
+                if (response.startsWith("{")){
+                    out.println("Content-type: application/json");
+                    out.println("Access-Control-Allow-Origin: *");
+                }else
+                    out.println("Content-type: text/html");
                 out.println("Content-length: " + response.length());
                 out.println("");
                 //Send Response
